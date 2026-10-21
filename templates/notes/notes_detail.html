@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}{{ note.title }} — LeetNode{% endblock %}
+
+{% block content %}
+
+<!-- header -->
+<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px;">
+    <div>
+        {% if note.problem_number %}
+        <p style="font-family:monospace; font-size:13px; color:#64748b; margin-bottom:4px;">#{{ note.problem_number }}
+        </p>
+        {% endif %}
+        <h1 style="font-size:28px; font-weight:700; margin-bottom:10px;">{{ note.title }}</h1>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            {% if note.difficulty == 'easy' %}
+            <span
+                style="background:rgba(52,211,153,0.1); color:#34d399; padding:4px 12px; border-radius:6px; font-size:13px; font-weight:600;">Easy</span>
+            {% elif note.difficulty == 'medium' %}
+            <span
+                style="background:rgba(251,191,36,0.1); color:#fbbf24; padding:4px 12px; border-radius:6px; font-size:13px; font-weight:600;">Medium</span>
+            {% else %}
+            <span
+                style="background:rgba(248,113,113,0.1); color:#f87171; padding:4px 12px; border-radius:6px; font-size:13px; font-weight:600;">Hard</span>
+            {% endif %}
+
+            {% for tag in note.tags.all %}
+            <span style="background:#2d3148; color:#94a3b8; padding:4px 12px; border-radius:6px; font-size:13px;">{{
+                tag.name }}</span>
+            {% endfor %}
+
+            {% if note.problem_link %}
+            <a href="{{ note.problem_link }}" target="_blank"
+                style="background:rgba(124,109,250,0.1); color:#7c6dfa; padding:4px 12px; border-radius:6px; font-size:13px; text-decoration:none;">View
+                on LeetCode ↗</a>
+            {% endif %}
+        </div>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <a href="{% url 'notes:update' note.pk %}" class="btn btn-secondary">Edit</a>
+        <a href="{% url 'notes:delete' note.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+<!-- AI insights -->
+{% if note.ai_generated %}
+<div style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px; padding:24px; margin-bottom:20px;">
+    <h2
+        style="font-size:14px; font-weight:600; color:#7c6dfa; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">
+        ⚡ AI Generated Insights</h2>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+            <h3 style="font-size:13px; color:#94a3b8; margin-bottom:8px;">Key Points</h3>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:6px;">
+                {% for point in note.key_points %}
+                <li style="font-size:14px; color:#e2e8f0; padding-left:16px; position:relative;">
+                    <span style="position:absolute; left:0; color:#7c6dfa;">▸</span>
+                    {{ point }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+                <h3 style="font-size:13px; color:#94a3b8; margin-bottom:8px;">Complexity</h3>
+                <p style="font-size:14px; color:#34d399;">⏱ {{ note.time_complexity }}</p>
+                <p style="font-size:14px; color:#22d3ee; margin-top:4px;">🗄 {{ note.space_complexity }}</p>
+            </div>
+            {% if note.similar_problems %}
+            <div>
+                <h3 style="font-size:13px; color:#94a3b8; margin-bottom:8px;">Similar Problems</h3>
+                {% for problem in note.similar_problems %}
+                <span
+                    style="background:#2d3148; color:#94a3b8; font-size:12px; padding:3px 10px; border-radius:4px; margin-right:6px; display:inline-block; margin-bottom:6px;">{{
+                    problem }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if note.core_pattern %}
+    <div
+        style="margin-top:16px; padding:12px 16px; background:rgba(124,109,250,0.08); border-left:3px solid #7c6dfa; border-radius:0 8px 8px 0;">
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:4px;">Core Pattern</p>
+        <p style="font-size:15px; color:#e2e8f0; font-weight:500;">{{ note.core_pattern }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- explanation -->
+<div style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px; padding:24px; margin-bottom:20px;">
+    <h2
+        style="font-size:14px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">
+        My Explanation</h2>
+    <p style="font-size:15px; color:#e2e8f0; line-height:1.7; white-space:pre-wrap;">{{ note.explanation }}</p>
+</div>
+
+<!-- code -->
+<div style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px; padding:24px; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2 style="font-size:14px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Code
+        </h2>
+        <span style="font-size:12px; color:#64748b; background:#2d3148; padding:3px 10px; border-radius:4px;">{{
+            note.language }}</span>
+    </div>
+    <pre
+        style="background:#0f1117; border-radius:8px; padding:20px; overflow-x:auto; font-family:monospace; font-size:14px; color:#e2e8f0; line-height:1.6;">{{ note.code }}</pre>
+</div>
+
+<p style="font-size:12px; color:#64748b;">Added {{ note.created }}</p>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Note — LeetNode{% endblock %}
+
+{% block content %}
+<div style="max-width:800px; margin:0 auto;">
+    <h1 style="font-size:24px; font-weight:700; margin-bottom:28px;">{{ action }} Note</h1>
+
+    <form method="POST" style="display:flex; flex-direction:column; gap:20px;">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div>
+            <label style="font-size:12px; color:#94a3b8; text-transform:uppercase;
+                          letter-spacing:1px; display:block; margin-bottom:6px;">
+                {{ field.label }}
+                {% if field.help_text %}
+                <span style="font-size:11px; color:#64748b; text-transform:none; letter-spacing:0; margin-left:6px;">—
+                    {{ field.help_text }}</span>
+                {% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+            <p style="color:#f87171; font-size:12px; margin-top:4px;">{{ field.errors.0 }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div style="display:flex; gap:12px; margin-top:8px;">
+            <button type="submit" class="btn btn-primary">{{ action }} Note</button>
+            <a href="{% url 'notes:list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="url"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px 14px;
+        background: #1a1d2e;
+        border: 1px solid #2d3148;
+        border-radius: 8px;
+        color: #e2e8f0;
+        font-size: 14px;
+        outline: none;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #7c6dfa;
+    }
+
+    textarea.code-area {
+        font-family: monospace;
+        font-size: 13px;
+    }
+
+    ul.checkboxselectmultiple,
+    ul {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    ul li label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: #94a3b8;
+        cursor: pointer;
+    }
+
+    ul li input[type="checkbox"] {
+        width: auto;
+    }
+</style>
+{% endblock %}

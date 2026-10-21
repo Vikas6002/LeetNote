@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Topics — LeetNode{% endblock %}
+
+{% block content %}
+<h1 style="font-size:24px; font-weight:700; margin-bottom:8px;">Topic Notes</h1>
+<p style="color:#64748b; margin-bottom:28px; font-size:14px;">
+    Core ideas per category — updated every time you add a note.
+</p>
+
+{% if topics %}
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px;">
+    {% for topic in topics %}
+    <a href="/topics/{{ topic.pk }}/" style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px;
+              padding:20px; text-decoration:none; display:block;
+              transition:border-color 0.2s;" onmouseover="this.style.borderColor='#7c6dfa'"
+        onmouseout="this.style.borderColor='#2d3148'">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <span style="background:rgba(124,109,250,0.1); color:#7c6dfa;
+                         font-size:13px; font-weight:600; padding:4px 12px;
+                         border-radius:6px;">
+                {{ topic.tag.name }}
+            </span>
+            <span style="font-size:12px; color:#64748b;">
+                {{ topic.updated_at|date:"M d" }}
+            </span>
+        </div>
+
+        {% if topic.core_statement %}
+        <p style="font-size:14px; color:#e2e8f0; line-height:1.6; margin-bottom:12px;">
+            {{ topic.core_statement }}
+        </p>
+        {% endif %}
+
+        {% if topic.key_tricks %}
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:4px;">
+            {% for trick in topic.key_tricks|slice:":3" %}
+            <li style="font-size:12px; color:#64748b; padding-left:12px; position:relative;">
+                <span style="position:absolute; left:0; color:#7c6dfa;">▸</span>
+                {{ trick }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </a>
+    {% endfor %}
+</div>
+
+{% else %}
+<div style="text-align:center; padding:80px 20px; color:#64748b;">
+    <div style="font-size:48px; margin-bottom:16px;">🧠</div>
+    <p style="font-size:18px; margin-bottom:8px;">No topics yet</p>
+    <p style="font-size:14px;">Topics are created automatically when you add notes with tags.</p>
+</div>
+{% endif %}
+
+{% endblock %}

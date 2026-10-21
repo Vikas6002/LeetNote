@@ -1,0 +1,48 @@
+<!-- templates/accounts/register.html -->
+{% extends 'base.html' %}
+{% block title %}Register — LeetNode{% endblock %}
+
+{% block content %}
+<div style="max-width:420px; margin:60px auto;">
+    <h1 style="font-size:24px; font-weight:700; margin-bottom:8px;">Create account</h1>
+    <p style="color:#64748b; margin-bottom:28px; font-size:14px;">Start tracking your LeetCode journey</p>
+
+    <form method="POST" style="display:flex; flex-direction:column; gap:16px;">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            <label
+                style="font-size:12px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px;">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+            <p style="color:#f87171; font-size:12px; margin-top:4px;">{{ field.errors.0 }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="margin-top:8px;">Create account</button>
+    </form>
+
+    <p style="margin-top:20px; font-size:14px; color:#64748b;">
+        Already have an account? <a href="{% url 'accounts:login' %}" style="color:#7c6dfa;">Login</a>
+    </p>
+</div>
+
+<style>
+    input {
+        width: 100%;
+        padding: 10px 14px;
+        background: #1a1d2e;
+        border: 1px solid #2d3148;
+        border-radius: 8px;
+        color: #e2e8f0;
+        font-size: 14px;
+        outline: none;
+    }
+
+    input:focus {
+        border-color: #7c6dfa;
+    }
+</style>
+{% endblock %}

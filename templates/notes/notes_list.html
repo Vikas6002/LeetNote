@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}My Notes — LeetNode{% endblock %}
+
+{% block content %}
+
+<!-- stats bar -->
+<div style="display:flex; gap:12px; margin-bottom:28px; flex-wrap:wrap;">
+    <div
+        style="background:#1a1d2e; border:1px solid #2d3148; border-radius:10px; padding:16px 24px; text-align:center;">
+        <div style="font-size:24px; font-weight:700; color:#7c6dfa;">{{ total }}</div>
+        <div style="font-size:12px; color:#64748b; margin-top:2px;">Total</div>
+    </div>
+    <div
+        style="background:#1a1d2e; border:1px solid #2d3148; border-radius:10px; padding:16px 24px; text-align:center;">
+        <div style="font-size:24px; font-weight:700; color:#34d399;">{{ easy_count }}</div>
+        <div style="font-size:12px; color:#64748b; margin-top:2px;">Easy</div>
+    </div>
+    <div
+        style="background:#1a1d2e; border:1px solid #2d3148; border-radius:10px; padding:16px 24px; text-align:center;">
+        <div style="font-size:24px; font-weight:700; color:#fbbf24;">{{ medium_count }}</div>
+        <div style="font-size:12px; color:#64748b; margin-top:2px;">Medium</div>
+    </div>
+    <div
+        style="background:#1a1d2e; border:1px solid #2d3148; border-radius:10px; padding:16px 24px; text-align:center;">
+        <div style="font-size:24px; font-weight:700; color:#f87171;">{{ hard_count }}</div>
+        <div style="font-size:12px; color:#64748b; margin-top:2px;">Hard</div>
+    </div>
+</div>
+
+<!-- search + filter -->
+<form method="GET" style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
+    <input type="text" name="q" value="{{ search_query }}" placeholder="Search title, tag, explanation..." style="flex:1; min-width:200px; padding:10px 14px; background:#1a1d2e;
+               border:1px solid #2d3148; border-radius:8px; color:#e2e8f0; font-size:14px; outline:none;" />
+<select name="difficulty"
+    style="padding:10px 14px; background:#1a1d2e; border:1px solid #2d3148; border-radius:8px; color:#e2e8f0; font-size:14px; outline:none;">
+    <option value="">All difficulties</option>
+    <option value="easy" {% if selected_diff == "easy" %}selected{% endif %}>Easy</option>
+    <option value="medium" {% if selected_diff == "medium" %}selected{% endif %}>Medium</option>
+    <option value="hard" {% if selected_diff == "hard" %}selected{% endif %}>Hard</option>
+</select>
+<select name="tag" style="padding:10px 14px; background:#1a1d2e; border:1px solid #2d3148;
+               border-radius:8px; color:#e2e8f0; font-size:14px; outline:none;">
+    <option value="">All tags</option>
+    {% for tag in all_tags %}
+    <option value="{{ tag.id }}" {% if selected_tag == tag.id %}selected{% endif %}>
+        {{ tag.name }}
+    </option>
+    {% endfor %}
+</select>
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if search_query or selected_diff or selected_tag %}
+    <a href="{% url 'notes:list' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+</form>
+
+<!-- notes grid -->
+{% if notes %}
+<div style="display:flex; flex-direction:column; gap:12px;">
+    {% for note in notes %}
+    <div style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px;
+                    padding:20px 24px; display:flex; align-items:center;
+                    justify-content:space-between; gap:16px;">
+        <div style="flex:1;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+                {% if note.problem_number %}
+                <span style="font-family:monospace; font-size:12px; color:#64748b;">#{{ note.problem_number }}</span>
+                {% endif %}
+                <!-- difficulty badge -->
+                {% if note.difficulty == 'easy' %}
+                <span
+                    style="background:rgba(52,211,153,0.1); color:#34d399; font-size:11px; padding:2px 8px; border-radius:4px; font-weight:600;">Easy</span>
+                {% elif note.difficulty == 'medium' %}
+                <span
+                    style="background:rgba(251,191,36,0.1); color:#fbbf24; font-size:11px; padding:2px 8px; border-radius:4px; font-weight:600;">Medium</span>
+                {% else %}
+                <span
+                    style="background:rgba(248,113,113,0.1); color:#f87171; font-size:11px; padding:2px 8px; border-radius:4px; font-weight:600;">Hard</span>
+                {% endif %}
+                <!-- tags -->
+                {% for tag in note.tag.all %}
+                <span style="background:#2d3148; color:#94a3b8; font-size:11px; padding:2px 8px; border-radius:4px;">{{
+                    tag.name }}</span>
+                {% endfor %}
+            </div>
+            <a href="{% url 'notes:detail' note.pk %}"
+                style="font-size:16px; font-weight:600; color:#e2e8f0; text-decoration:none;">
+                {{ note.title }}
+            </a>
+            {% if note.core_pattern %}
+            <p style="font-size:13px; color:#64748b; margin-top:4px;">{{ note.core_pattern }}</p>
+            {% endif %}
+        </div>
+        <div style="display:flex; gap:8px; white-space:nowrap;">
+            <a href="{% url 'notes:detail' note.pk %}" class="btn btn-secondary"
+                style="padding:6px 14px; font-size:13px;">View</a>
+            <a href="{% url 'notes:update' note.pk %}" class="btn btn-secondary"
+                style="padding:6px 14px; font-size:13px;">Edit</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center; padding:80px 20px; color:#64748b;">
+    <div style="font-size:48px; margin-bottom:16px;">📝</div>
+    <p style="font-size:18px; margin-bottom:8px;">No notes found</p>
+    <p style="font-size:14px; margin-bottom:24px;">
+        {% if search_query or selected_diff or selected_tag %}
+        No notes match your filters.
+        {% else %}
+        Start by adding your first solved problem.
+        {% endif %}
+    </p>
+    <a href="{% url 'notes:create' %}" class="btn btn-primary">+ Add your first note</a>
+</div>
+{% endif %}
+{% endblock %}

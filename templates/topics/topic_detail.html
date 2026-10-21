@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}{{ topic.tag.name }} — LeetNode{% endblock %}
+
+{% block content %}
+
+<!-- topic header -->
+<div style="margin-bottom:28px;">
+    <a href="/topics/" style="font-size:13px; color:#64748b; text-decoration:none;">← All Topics</a>
+    <h1 style="font-size:28px; font-weight:700; margin-top:8px;">{{ topic.tag.name }}</h1>
+    <p style="color:#64748b; font-size:13px;">Last updated {{ topic.updated_at|date:"M d, Y" }}</p>
+</div>
+
+<!-- core idea card -->
+<div style="background:rgba(124,109,250,0.08); border:1px solid rgba(124,109,250,0.2);
+            border-radius:12px; padding:24px; margin-bottom:20px;">
+    <h2 style="font-size:13px; color:#7c6dfa; text-transform:uppercase;
+               letter-spacing:1px; margin-bottom:12px;">Core Idea</h2>
+    <p style="font-size:16px; color:#e2e8f0; line-height:1.7;">
+        {{ topic.core_statement|default:"Not generated yet." }}
+    </p>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;">
+    <!-- key tricks -->
+    <div style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px; padding:20px;">
+        <h2 style="font-size:13px; color:#94a3b8; text-transform:uppercase;
+                   letter-spacing:1px; margin-bottom:12px;">Key Tricks</h2>
+        {% if topic.key_tricks %}
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+            {% for trick in topic.key_tricks %}
+            <li style="font-size:14px; color:#e2e8f0; padding-left:16px; position:relative;">
+                <span style="position:absolute; left:0; color:#7c6dfa;">▸</span>
+                {{ trick }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p style="color:#64748b; font-size:14px;">No tricks recorded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- when to use -->
+    <div style="background:#1a1d2e; border:1px solid #2d3148; border-radius:12px; padding:20px;">
+        <h2 style="font-size:13px; color:#94a3b8; text-transform:uppercase;
+                   letter-spacing:1px; margin-bottom:12px;">When To Use</h2>
+        <p style="font-size:14px; color:#e2e8f0; line-height:1.7;">
+            {{ topic.when_to_use|default:"Not generated yet." }}
+        </p>
+    </div>
+</div>
+
+<!-- notes in this topic -->
+<h2 style="font-size:16px; font-weight:600; margin-bottom:16px;">
+    Your Notes in {{ topic.tag.name }} ({{ notes.count }})
+</h2>
+
+{% if notes %}
+<div style="display:flex; flex-direction:column; gap:10px;">
+    {% for note in notes %}
+    <a href="/notes/{{ note.pk }}/" style="background:#1a1d2e; border:1px solid #2d3148; border-radius:10px;
+                  padding:16px 20px; text-decoration:none; display:flex;
+                  align-items:center; justify-content:space-between;">
+        <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                {% if note.problem_number %}
+                <span style="font-family:monospace; font-size:12px; color:#64748b;">#{{ note.problem_number }}</span>
+                {% endif %}
+                {% if note.difficulty == 'easy' %}
+                <span
+                    style="background:rgba(52,211,153,0.1); color:#34d399; font-size:11px; padding:2px 8px; border-radius:4px;">Easy</span>
+                {% elif note.difficulty == 'medium' %}
+                <span
+                    style="background:rgba(251,191,36,0.1); color:#fbbf24; font-size:11px; padding:2px 8px; border-radius:4px;">Medium</span>
+                {% else %}
+                <span
+                    style="background:rgba(248,113,113,0.1); color:#f87171; font-size:11px; padding:2px 8px; border-radius:4px;">Hard</span>
+                {% endif %}
+            </div>
+            <p style="font-size:15px; font-weight:600; color:#e2e8f0;">{{ note.title }}</p>
+            {% if note.core_pattern %}
+            <p style="font-size:13px; color:#64748b; margin-top:2px;">{{ note.core_pattern }}</p>
+            {% endif %}
+        </div>
+        <span style="color:#64748b; font-size:20px;">→</span>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p style="color:#64748b; font-size:14px;">No notes yet for this topic.</p>
+{% endif %}
+
+{% endblock %}
